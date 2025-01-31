@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MagtimusPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos1.css">
+</head>
+<body>
+
+    <main>
+        <!-- Solo formulario de Login -->
+        <div class="contenedor__todo">
+            <!-- Formulario de Login -->
+            <div class="contenedor__login-register">
+                <form class="formulario__login">
+                    <h2>Iniciar Sesión</h2>
+                    <input type="text" id="username" placeholder="Nombre" required>
+                    <input type="password" id="password" placeholder="Contraseña" required>
+                    <button type="submit">Entrar</button>
+                    <!-- Nuevo botón de registrarse que redirige a "registro.html" -->
+                    <button type="button" onclick="window.location.href='registro.html'">Regístrarse</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const loginForm = document.querySelector('.formulario__login');
+
+        // Validación de Login
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === "admin" && password === "1234") {
+                alert("¡Bienvenido!");
+                window.location.href = "tree.html"; // Redirige a la página de árbol de decisiones
+            } else {
+                alert("Credenciales incorrectas. Inténtalo de nuevo.");
+            }
+        });
+    </script>
+</body>
+</html>

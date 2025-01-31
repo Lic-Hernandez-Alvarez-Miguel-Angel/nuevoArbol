@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar - MagtimusPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilosRegistro.css">
+</head>
+<body>
+
+    <main>
+        <div class="contenedor__todo">
+            <!-- Formulario de Registro -->
+            <div class="contenedor__login-register">
+                <form class="formulario__login" id="registro-form">
+                    <h2>Registrarse</h2>
+                    <!-- Campos de Registro -->
+                    <input type="text" id="nombre-completo" placeholder="Nombre Completo" required>
+                    <input type="text" id="domicilio" placeholder="Domicilio" required>
+                    <input type="text" id="username" placeholder="Nombre de Usuario" required>
+                    <input type="password" id="password" placeholder="Contraseña" required>
+                    <button type="submit">Registrar</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const registerForm = document.querySelector('#registro-form');
+
+        // Validación de Registro
+        registerForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const nombreCompleto = document.getElementById('nombre-completo').value;
+            const domicilio = document.getElementById('domicilio').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Aquí podrías agregar validación adicional o enviar los datos a un servidor
+
+            alert(`Registro exitoso para ${nombreCompleto}`);
+            
+            // Redirigir al usuario a login1.html después de registrarse
+            window.location.href = "login1.html"; // Cambia la URL si es necesario
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Árbol de Decisiones</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #e6ffe6; /* Fondo verde claro */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #decisionTreeCard {
+            background-color: #ffffff; /* Fondo blanco del recuadro */
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h3 {
+            color: #333333;
+        }
+        .btn {
+            margin: 5px;
+        }
+        .response-box {
+            margin-top: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="decisionTreeCard">
+    <h3 id="question"></h3>
+    <div id="options"></div>
+    <button id="restart" class="btn btn-primary hidden">Reiniciar</button>
+    <button id="save" class="btn btn-success hidden">Guardar Respuesta</button>
+</div>
+
+<script>
+    class Node {
+        constructor(question, responseType = 'neutral') {
+            this.question = question;
+            this.options = [];
+            this.children = [];
+            this.responseType = responseType;
+        }
+
+        addOption(option, child) {
+            this.options.push(option);
+            this.children.push(child);
+        }
+    }
+
+    const respuestasUsuario = [];
+
+    function createTree() {
+        const root = new Node("¿Los ingresos totales son iguales a los costos totales?");
+        const puntoEquilibrio = new Node("M1: Hay un punto de equilibrio, no hay ganancias ni pérdidas.");
+        const ingresosMayores = new Node("¿Los ingresos son mayores que los costos totales?");
+        const ganancias = new Node("M2: Tiene un escenario de ganancias.");
+        const perdidas = new Node("¿Los costos de materias primas varían en el corto plazo (3 meses)?");
+        const costoNoVarian = new Node("M3: Los costos no varían en el corto plazo, revise otras estrategias.");
+        const costosVarian = new Node("¿Se ha revisado los precios?");
+        const revisarPreciosNegativo = new Node("M4: Alerta: Revise los precios.");
+        const revisarPreciosPositivo = new Node("¿Ha revisado sus proveedores?");
+        const revisarProveedoresNegativo = new Node("M5: Alerta: Haga una evaluación de proveedores.");
+        const revisarProveedoresPositivo = new Node("¿Ha considerado innovación o sustitución de insumos?");
+        const innovacionNegativo = new Node("M6: Alerta: Considere innovación o sustitución de insumos.");
+        const innovacionPositivo = new Node("¿Los costos de publicidad se han mantenido estables en los últimos 3 meses?");
+        const publicidadNoEstable = new Node("¿Se ha evaluado el uso de redes sociales para publicidad?");
+        const redesSocialesNo = new Node("M8: Alerta: Use redes sociales para su publicidad.");
+        const redesSocialesSi = new Node("¿Se ha realizado un análisis del uso de redes sociales?");
+        const analisisRedesNegativo = new Node("M9: Realice análisis de las redes sociales y su impacto en las ventas.");
+        const analisisRedesPositivo = new Node("¿Se ha considerado el análisis de sueldos y salarios?");
+        const sueldosSi = new Node("M10: El sistema no incurrirá en pérdidas si hay contratos de trabajo.");
+        const sueldosNo = new Node("M11: Alerta: La empresa está sujeta a la productividad sin contrato.");
+
+        root.addOption("Sí", puntoEquilibrio);
+        root.addOption("No", ingresosMayores);
+        ingresosMayores.addOption("Sí", ganancias);
+        ingresosMayores.addOption("No", perdidas);
+        perdidas.addOption("No", costoNoVarian);
+        perdidas.addOption("Sí", costosVarian);
+        costosVarian.addOption("No", revisarPreciosNegativo);
+        costosVarian.addOption("Sí", revisarPreciosPositivo);
+        revisarPreciosPositivo.addOption("No", revisarProveedoresNegativo);
+        revisarPreciosPositivo.addOption("Sí", revisarProveedoresPositivo);
+        revisarProveedoresPositivo.addOption("No", innovacionNegativo);
+        revisarProveedoresPositivo.addOption("Sí", innovacionPositivo);
+        innovacionPositivo.addOption("No", publicidadNoEstable);
+        innovacionPositivo.addOption("Sí", new Node("M7: Monitoree y ajuste las estrategias de publicidad."));
+        publicidadNoEstable.addOption("No", redesSocialesNo);
+        publicidadNoEstable.addOption("Sí", redesSocialesSi);
+        redesSocialesSi.addOption("No", analisisRedesNegativo);
+        redesSocialesSi.addOption("Sí", analisisRedesPositivo);
+        analisisRedesPositivo.addOption("Sí", sueldosSi);
+        analisisRedesPositivo.addOption("No", sueldosNo);
+
+        return root;
+    }
+
+    function obtenerMensajeID(respuesta) {
+        const mensajeIDs = {
+            "Sí": 1,
+            "No": 2
+        };
+        return mensajeIDs[respuesta] || 0;
+    }
+
+    function enviarRespuesta(usuarioID, pregunta, respuesta) {
+        const mensajeID = obtenerMensajeID(respuesta);
+
+        fetch('guardar_respuesta.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                usuarioID: usuarioID,
+                mensajeID: mensajeID
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Respuesta del servidor:', data);
+        })
+        .catch(error => {
+            console.error('Error al guardar la respuesta:', error);
+        });
+    }
+
+    function traverseTree(node) {
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const restartButton = document.getElementById('restart');
+        const saveButton = document.getElementById('save');
+
+        const askQuestion = (node) => {
+            if (node.children.length === 0) {
+                questionElement.textContent = node.question;
+                optionsElement.innerHTML = '';
+                restartButton.classList.remove('hidden');
+                saveButton.classList.remove('hidden');
+                return;
+            }
+
+            questionElement.textContent = node.question;
+            optionsElement.innerHTML = '';
+
+            node.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option btn btn-outline-dark';
+                button.textContent = option;
+                button.onclick = () => {
+                    const usuarioID = 1; // Cambia según obtención real del usuario
+                    enviarRespuesta(usuarioID, node.question, option);
+                    respuestasUsuario.push({ pregunta: node.question, respuesta: option });
+                    askQuestion(node.children[index]);
+                };
+                optionsElement.appendChild(button);
+            });
+        };
+
+        askQuestion(node);
+
+        restartButton.onclick = () => {
+            respuestasUsuario.length = 0;
+            restartButton.classList.add('hidden');
+            saveButton.classList.add('hidden');
+            askQuestion(createTree());
+        };
+
+        saveButton.onclick = () => {
+            fetch('guardar_respuesta.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(respuestasUsuario)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Error al guardar las respuestas: " + data.error);
+                } else {
+                    alert("Respuestas guardadas correctamente.");
+                }
+            })
+            .catch(error => {
+                console.error("Error al guardar las respuestas:", error);
+            });
+        };
+    }
+
+    window.onload = () => {
+        const decisionTree = createTree();
+        traverseTree(decisionTree);
+    };
+</script>
+
+</body>
+</html>
