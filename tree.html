@@ -63,51 +63,46 @@
 
     const respuestasUsuario = [];
 
-    function createTree() {
-        const root = new Node("¿Los ingresos totales son iguales a los costos totales?");
-        const puntoEquilibrio = new Node("M1: Hay un punto de equilibrio, no hay ganancias ni pérdidas.");
-        const ingresosMayores = new Node("¿Los ingresos son mayores que los costos totales?");
-        const ganancias = new Node("M2: Tiene un escenario de ganancias.");
-        const perdidas = new Node("¿Los costos de materias primas varían en el corto plazo (3 meses)?");
-        const costoNoVarian = new Node("M3: Los costos no varían en el corto plazo, revise otras estrategias.");
-        const costosVarian = new Node("¿Se ha revisado los precios?");
-        const revisarPreciosNegativo = new Node("M4: Alerta: Revise los precios.");
-        const revisarPreciosPositivo = new Node("¿Ha revisado sus proveedores?");
-        const revisarProveedoresNegativo = new Node("M5: Alerta: Haga una evaluación de proveedores.");
-        const revisarProveedoresPositivo = new Node("¿Ha considerado innovación o sustitución de insumos?");
-        const innovacionNegativo = new Node("M6: Alerta: Considere innovación o sustitución de insumos.");
-        const innovacionPositivo = new Node("¿Los costos de publicidad se han mantenido estables en los últimos 3 meses?");
-        const publicidadNoEstable = new Node("¿Se ha evaluado el uso de redes sociales para publicidad?");
-        const redesSocialesNo = new Node("M8: Alerta: Use redes sociales para su publicidad.");
-        const redesSocialesSi = new Node("¿Se ha realizado un análisis del uso de redes sociales?");
-        const analisisRedesNegativo = new Node("M9: Realice análisis de las redes sociales y su impacto en las ventas.");
-        const analisisRedesPositivo = new Node("¿Se ha considerado el análisis de sueldos y salarios?");
-        const sueldosSi = new Node("M10: El sistema no incurrirá en pérdidas si hay contratos de trabajo.");
-        const sueldosNo = new Node("M11: Alerta: La empresa está sujeta a la productividad sin contrato.");
+   function createTree() {
+  const root = new Node("Are total revenues equal to total costs?");
+  const breakEvenPoint = new Node("M1: There is a balance point between costs and revenues.");
+  const analyzeCosts = new Node("It is necessary to analyze total costs and revenues.");
+  const profits = new Node("M2: The company is in a profit scenario.");
+  const losses = new Node("Costs are higher than sales, losses are being generated. Do raw material costs fluctuate in the short term?");
+  const stableCosts = new Node("M3: A profit scenario is inferred. Although costs do not fluctuate in the short term, they may change in the long term.");
+  const reviewPrices = new Node("Has a price review been conducted?");
+  const reviewSuppliers = new Node("Has a supplier evaluation been conducted?");
+  const innovation = new Node("Has innovation or material substitution been implemented?");
+  const stableAdvertising = new Node("M7: Sales stability exists, but it is recommended to monitor and adjust advertising strategies.");
+  const reviewAdvertising = new Node("Have advertising strategies been reviewed?");
+  const socialMedia = new Node("Are social media used for advertising?");
+  const analyzeSocialMedia = new Node("Has an analysis of social media usage been conducted?");
+  const evaluateContract = new Node("Is there a labor contract?");
+  const noContract = new Node("M11: The company is subject to the productivity of the contracted worker (freelance), which increases the risk of losses.");
+  const withContract = new Node("M10: The company is not incurring losses.");
+  root.addOption("Yes", breakEvenPoint);
+  root.addOption("No", analyzeCosts);
+  analyzeCosts.addOption("Yes", profits);
+  analyzeCosts.addOption("No", losses);
+  losses.addOption("No", stableCosts);
+  losses.addOption("Yes", reviewPrices);
+  reviewPrices.addOption("Yes", reviewSuppliers);
+  reviewPrices.addOption("No", new Node("M4: The company needs to conduct a price review."));
+  reviewSuppliers.addOption("Yes", innovation);
+  reviewSuppliers.addOption("No", new Node("M5: The company needs to conduct a supplier evaluation."));
+  innovation.addOption("Yes", reviewAdvertising);
+  innovation.addOption("No", new Node("M6: The company needs to implement innovation and material substitution."));
+  reviewAdvertising.addOption("Yes", stableAdvertising);
+  reviewAdvertising.addOption("No", socialMedia);
+  socialMedia.addOption("Yes", analyzeSocialMedia);
+  socialMedia.addOption("No", new Node("M8: The use of social media for advertising is recommended."));
+  analyzeSocialMedia.addOption("Yes", evaluateContract);
+  analyzeSocialMedia.addOption("No", new Node("M9: It is recommended to analyze social media usage and its impact on sales."));
+  evaluateContract.addOption("Yes", withContract);
+  evaluateContract.addOption("No", noContract);
+  return root;
+}
 
-        root.addOption("Sí", puntoEquilibrio);
-        root.addOption("No", ingresosMayores);
-        ingresosMayores.addOption("Sí", ganancias);
-        ingresosMayores.addOption("No", perdidas);
-        perdidas.addOption("No", costoNoVarian);
-        perdidas.addOption("Sí", costosVarian);
-        costosVarian.addOption("No", revisarPreciosNegativo);
-        costosVarian.addOption("Sí", revisarPreciosPositivo);
-        revisarPreciosPositivo.addOption("No", revisarProveedoresNegativo);
-        revisarPreciosPositivo.addOption("Sí", revisarProveedoresPositivo);
-        revisarProveedoresPositivo.addOption("No", innovacionNegativo);
-        revisarProveedoresPositivo.addOption("Sí", innovacionPositivo);
-        innovacionPositivo.addOption("No", publicidadNoEstable);
-        innovacionPositivo.addOption("Sí", new Node("M7: Monitoree y ajuste las estrategias de publicidad."));
-        publicidadNoEstable.addOption("No", redesSocialesNo);
-        publicidadNoEstable.addOption("Sí", redesSocialesSi);
-        redesSocialesSi.addOption("No", analisisRedesNegativo);
-        redesSocialesSi.addOption("Sí", analisisRedesPositivo);
-        analisisRedesPositivo.addOption("Sí", sueldosSi);
-        analisisRedesPositivo.addOption("No", sueldosNo);
-
-        return root;
-    }
 
     function obtenerMensajeID(respuesta) {
         const mensajeIDs = {
